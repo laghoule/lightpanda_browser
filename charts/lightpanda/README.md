@@ -376,6 +376,13 @@ charts/lightpanda/
     └── NOTES.txt
 ```
 
+## AI-assisted development
+
+This chart and its documentation were created with the help of an AI
+coding agent (Zed's agent, using Anthropic Claude models), under human
+review and direction. See the [repository root README](../../README.md#ai-assisted-development)
+for details.
+
 ## License
 
 This chart is licensed under the [GNU General Public License v3.0](../../LICENSE)

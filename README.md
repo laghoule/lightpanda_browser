@@ -68,6 +68,14 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for one-time repository setup
 (GitHub Pages, workflow permissions), the release process, and local
 validation instructions.
 
+## AI-assisted development
+
+This chart, its CI/CD workflows, and this documentation were created with
+the help of an AI coding agent (Zed's agent, using Anthropic Claude
+models), under human review and direction. All changes were validated with
+`helm lint`/`helm template`/`ct lint`/`ct install` and verified against the
+live repository before being considered complete.
+
 ## License
 
 Licensed under the [GNU General Public License v3.0](./LICENSE) (GPLv3).
