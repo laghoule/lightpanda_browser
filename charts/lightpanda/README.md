@@ -128,7 +128,7 @@ list and inline comments.
 | --- | --- | --- |
 | `config.logLevel` | Log level: `debug`, `info`, `warn`, `error`, `fatal` | `info` |
 | `config.logFormat` | Log format: `logfmt`, `json`, `pretty` | `logfmt` |
-| `config.obeyRobots` | Respect `robots.txt` | `false` |
+| `config.obeyRobots` | Respect `robots.txt` | `true` |
 | `config.blockPrivateNetworks` | Block requests to private/internal networks | `false` |
 | `config.cors` | Enable the experimental CORS feature | `false` |
 | `config.loadResources` | Extra resource types to load (e.g. `iframe`, `image`) | `[]` |
