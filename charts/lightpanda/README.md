@@ -219,6 +219,111 @@ list and inline comments.
 | `metrics.serviceMonitor.interval` | Scrape interval | `30s` |
 | `metrics.serviceMonitor.scrapeTimeout` | Scrape timeout | `10s` |
 | `metrics.serviceMonitor.labels` | Extra labels for the `ServiceMonitor` (for `Prometheus` CR selectors) | `{}` |
+| `metrics.prometheusRule.enabled` | Create a Prometheus Operator `PrometheusRule` with built-in alerts | `false` |
+| `metrics.prometheusRule.namespace` | Namespace for the `PrometheusRule` | release namespace |
+| `metrics.prometheusRule.additionalLabels` | Extra labels on the `PrometheusRule` (for your Prometheus' `ruleSelector`) | `{}` |
+| `metrics.prometheusRule.rules` | List of alerting rules — see below | see `values.yaml` |
+| `metrics.prometheusRule.additionalGroups` | Extra raw rule groups (standard `PrometheusRule` `groups` schema), appended as-is | `[]` |
+
+#### Built-in alerting rules
+
+Enabling `metrics.prometheusRule.enabled` ships a `PrometheusRule` with alerts
+based on Lightpanda's own metrics (see
+[`src/Metrics.zig`](https://github.com/lightpanda-io/browser/blob/main/src/Metrics.zig)
+upstream). `metrics.prometheusRule.rules` is a plain list, and the template
+just `range`s over it — each item maps almost 1:1 to a native
+[Prometheus alerting rule](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/)
+(`alert`/`expr`/`for`/`labels`/`annotations`), plus an `enabled` flag:
+
+| Alert | Fires when |
+| --- | --- |
+| `LightpandaTargetDown` | Prometheus can't scrape the instance for 5m |
+| `LightpandaJSHeapLimitHit` | Any page was killed for hitting the V8 heap limit within 15m |
+| `LightpandaHighJSErrorRate` | Uncaught JS error rate exceeds 0.1/sec over 10m |
+| `LightpandaHighHTTPErrorRate` | Ratio of failed outbound HTTP requests exceeds 10% over 10m |
+| `LightpandaConnectionLimitReached` | New connections were deferred because `server.maxConnections` was hit within 5m |
+| `LightpandaSessionTimeoutSpike` | Any WebDriver/CDP session timed out within 15m |
+| `LightpandaInboxBacklogDrops` | Any websocket connection was dropped for backlog overload within 5m |
+
+**Templating note:** `expr` is rendered through Helm's `tpl`, so it can
+reference chart helpers, e.g. `{{ include "lightpanda.fullname" . }}` to
+scope the `job` label to this release. `labels`/`annotations` are **not**
+processed by Helm and are emitted as-is, so Prometheus' own alert templating
+(`{{ $value }}`, `{{ $labels.xxx }}`) works there with zero escaping.
+
+**Important — lists replace, they don't merge:** Helm replaces list values
+wholesale on override, it doesn't merge them item-by-item like it does for
+maps. So `--set metrics.prometheusRule.rules[0].enabled=false` or a values
+file that only sets a couple of fields will **drop every other built-in
+rule**, not just tweak one (see the example below, where only the two
+listed rules survive). To tweak, disable, or remove individual rules while
+keeping the rest, copy the full `rules` list from `values.yaml` into your
+own values file and edit it there.
+
+Example: disable the target-down alert and tighten the JS error threshold,
+keeping every other built-in rule (copied from `values.yaml`, then edited):
+
+```yaml
+metrics:
+  prometheusRule:
+    enabled: true
+    rules:
+      - alert: LightpandaTargetDown
+        enabled: false           # <- disabled, rest unchanged
+        expr: 'up{job="{{ include "lightpanda.fullname" . }}"} == 0'
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: Lightpanda target down
+          description: 'Prometheus has not been able to scrape this instance for over 5m (instance {{ $labels.instance }}).'
+      - alert: LightpandaHighJSErrorRate
+        enabled: true
+        expr: 'rate(js_errors_total{job="{{ include "lightpanda.fullname" . }}"}[10m]) > 0.05'  # <- tightened from 0.1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: High rate of uncaught JS errors
+          description: '{{ $value | printf "%.2f" }} uncaught JS errors/sec ({{ $labels.kind }}) over the last 10m (threshold 0.05/sec).'
+      # ... plus the other built-in rules, unchanged, copied from values.yaml
+```
+
+To add a brand new rule without touching the built-ins, append to the copied
+list:
+
+```yaml
+      - alert: MyCustomExtraRule
+        enabled: true
+        expr: 'rate(http_redirects_total{job="{{ include "lightpanda.fullname" . }}"}[5m]) > 10'
+        for: 5m
+        labels:
+          severity: info
+        annotations:
+          summary: Lots of redirects
+          description: '{{ $value }} redirects/sec'
+```
+
+For alerts that don't fit the single-group model at all (e.g. a separate
+rule group with its own name), use `additionalGroups`, appended as sibling
+groups — this one is untouched by list-replacement concerns since it's
+additive, not merged with `rules`:
+
+```yaml
+metrics:
+  prometheusRule:
+    enabled: true
+    additionalGroups:
+      - name: lightpanda-custom
+        rules:
+          - alert: MyCustomAlert
+            expr: up{job="my-lightpanda"} == 0
+            for: 2m
+            labels:
+              severity: page
+            annotations:
+              summary: Custom alert
+```
 
 ## Ingress & WebSockets
 

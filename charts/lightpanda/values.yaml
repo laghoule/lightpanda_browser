@@ -150,6 +150,100 @@ metrics:
     interval: 30s
     scrapeTimeout: 10s
     labels: {}
+  # Prometheus Operator PrometheusRule with alerting rules based on
+  # Lightpanda's own metrics (see
+  # https://github.com/lightpanda-io/browser/blob/main/src/Metrics.zig).
+  # Requires metrics.enabled and a running Prometheus that watches
+  # PrometheusRule resources (e.g. via kube-prometheus-stack).
+  prometheusRule:
+    enabled: false
+    namespace: ""
+    # Extra labels on the PrometheusRule object itself, e.g. to match your
+    # Prometheus' ruleSelector.
+    additionalLabels: {}
+    # Each entry becomes one alerting rule; the template just `range`s over
+    # this list, so you can tweak thresholds, disable, remove, reorder, or
+    # add rules purely by editing values — no template changes needed.
+    #
+    # `expr` is rendered through Helm's `tpl`, so it may reference chart
+    # values/helpers, e.g. `{{ include "lightpanda.fullname" . }}` to scope
+    # the `job` label to this release. `labels`/`annotations` are NOT
+    # processed by Helm and are emitted as-is, so Prometheus' own alert
+    # templating (`{{ $value }}`, `{{ $labels.xxx }}`) works there with no
+    # escaping needed. Set `enabled: false` to skip an entry without
+    # deleting it.
+    rules:
+      - alert: LightpandaTargetDown
+        enabled: true
+        expr: 'up{job="{{ include "lightpanda.fullname" . }}"} == 0'
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: Lightpanda target down
+          description: 'Prometheus has not been able to scrape this instance for over 5m (instance {{ $labels.instance }}).'
+      - alert: LightpandaJSHeapLimitHit
+        enabled: true
+        expr: 'increase(js_heap_limits_total{job="{{ include "lightpanda.fullname" . }}"}[15m]) > 0'
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: Lightpanda pages hitting the V8 heap limit
+          description: '{{ $value }} page(s) were terminated in the last 15m for exceeding the V8 heap limit. Consider raising config.v8MaxHeapMb or investigating memory-heavy pages.'
+      - alert: LightpandaHighJSErrorRate
+        enabled: true
+        expr: 'rate(js_errors_total{job="{{ include "lightpanda.fullname" . }}"}[10m]) > 0.1'
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: High rate of uncaught JS errors
+          description: '{{ $value | printf "%.2f" }} uncaught JS errors/sec ({{ $labels.kind }}) over the last 10m (threshold 0.1/sec).'
+      - alert: LightpandaHighHTTPErrorRate
+        enabled: true
+        expr: |-
+          (
+            sum(rate(http_error_total{job="{{ include "lightpanda.fullname" . }}"}[10m]))
+            /
+            sum(rate(http_requests_total{job="{{ include "lightpanda.fullname" . }}"}[10m]))
+          ) > 0.1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: High outbound HTTP error rate
+          description: 'More than 10% of outbound HTTP requests failed before a response, over the last 10m.'
+      - alert: LightpandaConnectionLimitReached
+        enabled: true
+        expr: 'increase(serve_connection_limit_total{job="{{ include "lightpanda.fullname" . }}"}[5m]) > 0'
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: Lightpanda CDP connection budget exhausted
+          description: 'New connections were deferred because server.maxConnections was reached at least once in the last 5m. Consider raising server.maxConnections or scaling out.'
+      - alert: LightpandaSessionTimeoutSpike
+        enabled: true
+        expr: 'increase(serve_session_timeouts_total{job="{{ include "lightpanda.fullname" . }}"}[15m]) > 0'
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: WebDriver/CDP sessions timing out
+          description: '{{ $value }} session(s) timed out in the last 15m. Clients may not be closing sessions properly, or server.httpSessionTimeout may be too aggressive.'
+      - alert: LightpandaInboxBacklogDrops
+        enabled: true
+        expr: 'increase(serve_inbox_backlog_total{job="{{ include "lightpanda.fullname" . }}"}[5m]) > 0'
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: Lightpanda dropping connections due to message backlog
+          description: '{{ $value }} websocket connection(s) were closed in the last 5m for queueing more unprocessed messages than the worker could drain — the driver may be overloaded.'
+    # Extra rule groups appended as-is, using the standard Prometheus
+    # Operator PrometheusRule `groups` schema, for fully custom alerts.
+    additionalGroups: []
 
 autoscaling:
   enabled: false

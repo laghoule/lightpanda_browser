@@ -155,6 +155,30 @@
             "scrapeTimeout": { "type": "string" },
             "labels": { "type": "object" }
           }
+        },
+        "prometheusRule": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "namespace": { "type": "string" },
+            "additionalLabels": { "type": "object" },
+            "rules": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "alert": { "type": "string" },
+                  "enabled": { "type": "boolean" },
+                  "expr": { "type": "string" },
+                  "for": { "type": "string" },
+                  "labels": { "type": "object" },
+                  "annotations": { "type": "object" }
+                },
+                "required": ["alert", "expr"]
+              }
+            },
+            "additionalGroups": { "type": "array" }
+          }
         }
       }
     },
