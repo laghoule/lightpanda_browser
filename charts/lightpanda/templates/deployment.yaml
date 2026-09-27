@@ -39,31 +39,46 @@ spec:
           command:
             - lightpanda
             - serve
+          # NOTE: the lightpanda CLI parser requires `--flag value` as two
+          # separate tokens; it does NOT accept `--flag=value` (no `=`
+          # splitting in its arg parser). Every value-taking flag below must
+          # therefore be emitted as two list entries.
           args:
-            - --host={{ .Values.server.host }}
-            - --port={{ int .Values.server.port }}
-            - --log-level={{ .Values.config.logLevel }}
-            - --log-format={{ .Values.config.logFormat }}
+            - --host
+            - {{ .Values.server.host | quote }}
+            - --port
+            - {{ int .Values.server.port | quote }}
+            - --log-level
+            - {{ .Values.config.logLevel | quote }}
+            - --log-format
+            - {{ .Values.config.logFormat | quote }}
             {{- range .Values.server.protocols }}
-            - --protocol={{ . }}
+            - --protocol
+            - {{ . | quote }}
             {{- end }}
             {{- if .Values.server.advertiseHost }}
-            - --advertise-host={{ .Values.server.advertiseHost }}
+            - --advertise-host
+            - {{ .Values.server.advertiseHost | quote }}
             {{- end }}
             {{- if .Values.server.maxConnections }}
-            - --cdp-max-connections={{ int .Values.server.maxConnections }}
+            - --cdp-max-connections
+            - {{ int .Values.server.maxConnections | quote }}
             {{- end }}
             {{- if .Values.server.maxPendingConnections }}
-            - --cdp-max-pending-connections={{ int .Values.server.maxPendingConnections }}
+            - --cdp-max-pending-connections
+            - {{ int .Values.server.maxPendingConnections | quote }}
             {{- end }}
             {{- if .Values.server.maxMessageSize }}
-            - --cdp-max-message-size={{ int .Values.server.maxMessageSize }}
+            - --cdp-max-message-size
+            - {{ int .Values.server.maxMessageSize | quote }}
             {{- end }}
             {{- if .Values.server.maxHttpMessageSize }}
-            - --cdp-max-http-message-size={{ int .Values.server.maxHttpMessageSize }}
+            - --cdp-max-http-message-size
+            - {{ int .Values.server.maxHttpMessageSize | quote }}
             {{- end }}
             {{- if .Values.server.httpSessionTimeout }}
-            - --http-session-timeout={{ int .Values.server.httpSessionTimeout }}
+            - --http-session-timeout
+            - {{ int .Values.server.httpSessionTimeout | quote }}
             {{- end }}
             {{- if not .Values.metrics.enabled }}
             - --disable-metrics
@@ -75,49 +90,64 @@ spec:
             - --block-private-networks
             {{- end }}
             {{- if .Values.config.cors }}
-            - --experimental-features=cors
+            - --experimental-features
+            - cors
             {{- end }}
             {{- range .Values.config.loadResources }}
-            - --load-resources={{ . }}
+            - --load-resources
+            - {{ . | quote }}
             {{- end }}
             {{- if .Values.config.watchdogMs }}
-            - --watchdog-ms={{ int .Values.config.watchdogMs }}
+            - --watchdog-ms
+            - {{ int .Values.config.watchdogMs | quote }}
             {{- end }}
             {{- if .Values.config.httpTimeout }}
-            - --http-timeout={{ int .Values.config.httpTimeout }}
+            - --http-timeout
+            - {{ int .Values.config.httpTimeout | quote }}
             {{- end }}
             {{- if .Values.config.httpConnectTimeout }}
-            - --http-connect-timeout={{ int .Values.config.httpConnectTimeout }}
+            - --http-connect-timeout
+            - {{ int .Values.config.httpConnectTimeout | quote }}
             {{- end }}
             {{- if .Values.config.httpMaxConcurrent }}
-            - --http-max-concurrent={{ int .Values.config.httpMaxConcurrent }}
+            - --http-max-concurrent
+            - {{ int .Values.config.httpMaxConcurrent | quote }}
             {{- end }}
             {{- if .Values.config.timezone }}
-            - --timezone={{ .Values.config.timezone }}
+            - --timezone
+            - {{ .Values.config.timezone | quote }}
             {{- end }}
             {{- if .Values.config.locale }}
-            - --locale={{ .Values.config.locale }}
+            - --locale
+            - {{ .Values.config.locale | quote }}
             {{- end }}
             {{- if .Values.config.userAgent }}
-            - --user-agent={{ .Values.config.userAgent }}
+            - --user-agent
+            - {{ .Values.config.userAgent | quote }}
             {{- end }}
             {{- if .Values.config.userAgentSuffix }}
-            - --user-agent-suffix={{ .Values.config.userAgentSuffix }}
+            - --user-agent-suffix
+            - {{ .Values.config.userAgentSuffix | quote }}
             {{- end }}
             {{- if gt (int .Values.config.v8MaxHeapMb) 0 }}
-            - --v8-max-heap-mb={{ int .Values.config.v8MaxHeapMb }}
+            - --v8-max-heap-mb
+            - {{ int .Values.config.v8MaxHeapMb | quote }}
             {{- end }}
             {{- range .Values.config.blockUrls }}
-            - --block-urls={{ . }}
+            - --block-urls
+            - {{ . | quote }}
             {{- end }}
             {{- range .Values.config.blockCidrs }}
-            - --block-cidrs={{ . }}
+            - --block-cidrs
+            - {{ . | quote }}
             {{- end }}
             {{- range .Values.config.adblockLists }}
-            - --adblock-lists={{ . }}
+            - --adblock-lists
+            - {{ . | quote }}
             {{- end }}
             {{- if and .Values.config.proxy.enabled .Values.config.proxy.httpProxy }}
-            - --http-proxy={{ .Values.config.proxy.httpProxy }}
+            - --http-proxy
+            - {{ .Values.config.proxy.httpProxy | quote }}
             {{- end }}
             {{- with .Values.extraArgs }}
             {{- toYaml . | nindent 12 }}
