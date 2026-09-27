@@ -5,8 +5,6 @@ AI-native, headless browser written in Zig — as a CDP/WebDriver Bidi server
 on Kubernetes, for web automation and scraping with Puppeteer, Playwright,
 or any CDP-compatible client.
 
-- **Chart version:** 0.1.0
-- **App version:** 0.4.1
 - **Upstream project:** https://github.com/lightpanda-io/browser
 
 ## Introduction
