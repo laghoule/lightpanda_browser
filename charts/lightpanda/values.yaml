@@ -1,0 +1,179 @@
+replicaCount: 1
+
+image:
+  repository: lightpanda/browser
+  pullPolicy: IfNotPresent
+  tag: "0.4.1"
+  # If set, takes precedence over `tag` (e.g. sha256:abcdef...)
+  digest: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+server:
+  host: "0.0.0.0"
+  port: 9222
+  protocols:
+    - cdp
+  advertiseHost: ""
+  maxConnections: 16
+  maxPendingConnections: 128
+  maxMessageSize: 1048576
+  maxHttpMessageSize: 4096
+  httpSessionTimeout: 60
+
+config:
+  logLevel: "info"
+  logFormat: "logfmt"
+  obeyRobots: false
+  blockPrivateNetworks: false
+  cors: false
+  loadResources: []
+  watchdogMs: 30000
+  httpTimeout: 15000
+  httpConnectTimeout: 8000
+  httpMaxConcurrent: 40
+  timezone: "UTC"
+  locale: "en-US"
+  userAgent: ""
+  userAgentSuffix: ""
+  v8MaxHeapMb: 0
+  blockUrls: []
+  blockCidrs: []
+  adblockLists: []
+  proxy:
+    enabled: false
+    httpProxy: ""
+    proxyBearerToken: ""
+    existingSecret: ""
+    existingSecretKey: ""
+
+env:
+  disableTelemetry: true
+  disableCoreDump: true
+
+extraArgs: []
+extraEnv: []
+extraEnvFrom: []
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+# emptyDir mounted at /tmp to support readOnlyRootFilesystem
+tmpVolume:
+  enabled: true
+  sizeLimit: ""
+
+service:
+  type: ClusterIP
+  port: 9222
+  nodePort: null
+  annotations: {}
+
+ingress:
+  enabled: false
+  className: ""
+  # CDP/WebDriver are long-lived WebSocket connections. Ingress controllers
+  # are annotation-driven and provider-specific, so no default annotations
+  # are set here. See the "Ingress & WebSockets" section of the README for
+  # examples (nginx, Traefik, HAProxy, Gateway API, ...).
+  annotations: {}
+  hosts:
+    - host: lightpanda.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /json/version
+    port: cdp
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /json/version
+    port: cdp
+  initialDelaySeconds: 2
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 2
+
+startupProbe:
+  httpGet:
+    path: /json/version
+    port: cdp
+  initialDelaySeconds: 1
+  periodSeconds: 2
+  timeoutSeconds: 2
+  failureThreshold: 30
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: false
+    namespace: ""
+    interval: 30s
+    scrapeTimeout: 10s
+    labels: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+
+networkPolicy:
+  enabled: false
+  ingress: []
+  # If left empty, egress defaults to allow-all (`to: []`), since the browser
+  # needs unrestricted outbound access to navigate the web. Override this
+  # list to restrict egress if needed.
+  egress: []
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+topologySpreadConstraints: []
+
+extraVolumes: []
+extraVolumeMounts: []

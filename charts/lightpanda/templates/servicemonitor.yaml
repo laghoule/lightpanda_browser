@@ -1,0 +1,23 @@
+{{- if and .Values.metrics.enabled .Values.metrics.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "lightpanda.fullname" . }}
+  {{- if .Values.metrics.serviceMonitor.namespace }}
+  namespace: {{ .Values.metrics.serviceMonitor.namespace }}
+  {{- end }}
+  labels:
+    {{- include "lightpanda.labels" . | nindent 4 }}
+    {{- with .Values.metrics.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "lightpanda.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: cdp
+      path: /metrics
+      interval: {{ .Values.metrics.serviceMonitor.interval }}
+      scrapeTimeout: {{ .Values.metrics.serviceMonitor.scrapeTimeout }}
+{{- end }}

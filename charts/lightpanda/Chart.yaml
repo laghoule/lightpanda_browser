@@ -1,0 +1,24 @@
+apiVersion: v2
+name: lightpanda
+description: A Helm chart for Lightpanda Browser - AI-native headless browser for web automation and scraping
+type: application
+version: 0.1.0
+appVersion: "0.4.1"
+keywords:
+  - lightpanda
+  - browser
+  - headless
+  - cdp
+  - scraping
+  - automation
+  - playwright
+  - puppeteer
+home: https://lightpanda.io
+sources:
+  - https://github.com/lightpanda-io/browser
+maintainers:
+  - name: laghoule
+    email: pgauthier@nihilisme.ca
+    url: https://github.com/laghoule
+annotations:
+  artifacthub.io/license: GPL-3.0
