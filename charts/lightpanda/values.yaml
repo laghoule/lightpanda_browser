@@ -26,7 +26,7 @@ server:
 config:
   logLevel: "info"
   logFormat: "logfmt"
-  obeyRobots: false
+  obeyRobots: true
   blockPrivateNetworks: false
   cors: false
   loadResources: []
