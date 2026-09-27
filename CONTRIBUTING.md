@@ -55,6 +55,17 @@ when `chart-releaser` tried to push). Fix:
 3. Merge to `main` — `release.yaml` then packages the chart, creates a
    GitHub Release, and updates `index.yaml` on `gh-pages`.
 
+### Note: pushes that don't bump the version
+
+`release.yaml` triggers on **any** push to `main` touching `charts/**`, not
+just version bumps (e.g. a `README.md` or `values.yaml` fix without a
+version change). `chart-releaser` is configured with `skip_existing: true`,
+so in that case it just detects that a release for the current version
+already exists and skips it (no-op, workflow still shows green). If you
+see the run fail instead of skipping, check that `skip_existing` is still
+set in `release.yaml` — without it, `chart-releaser` errors out instead of
+skipping when trying to re-publish an existing version.
+
 ## Local validation
 
 ```console
