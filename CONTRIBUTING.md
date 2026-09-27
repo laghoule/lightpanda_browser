@@ -12,15 +12,39 @@ whoever administers this repo (they can't be done from chart files alone):
 
 1. **Push this repository to GitHub**, with `main` as the default branch.
 2. **Workflow permissions:** in *Settings → Actions → General → Workflow
-   permissions*, select **"Read and write permissions"**. The release
-   workflow needs this to push to the `gh-pages` branch and create releases
-   using the default `GITHUB_TOKEN`.
-3. **First release:** merge a change to `main` (e.g. the initial commit) so
-   the release workflow runs once — this creates the `gh-pages` branch.
+   permissions*, select **"Read and write permissions"**. Do this *before*
+   the first push/run — the release workflow needs it to push to the
+   `gh-pages` branch and create releases using the default `GITHUB_TOKEN`.
+3. **First release:** push/merge a change to `main` that touches
+   `charts/**` (e.g. the initial commit), or manually trigger the
+   **Release Charts** workflow from the *Actions* tab (`workflow_dispatch`).
+   This lets `chart-releaser` create the `gh-pages` branch itself (as an
+   orphan branch containing `index.yaml` + the packaged `.tgz`) — **do not**
+   create `gh-pages` manually from the GitHub UI, or it won't be in the
+   format `chart-releaser` expects.
 4. **Enable GitHub Pages:** in *Settings → Pages*, set **Source** to
    **"Deploy from a branch"**, branch **`gh-pages`**, folder **`/ (root)`**.
+   (This option only appears once `gh-pages` exists, i.e. after step 3 ran
+   successfully.)
 5. The chart repository is then served at
    `https://laghoule.github.io/lightpanda_browser/`.
+
+### Troubleshooting: no release / empty `index.yaml`
+
+If the **Release Charts** run finishes green but no GitHub Release or tag
+appears, and `gh-pages` doesn't contain an `index.yaml`, it's almost always
+step 2 above being done *after* the run (permissions were still read-only
+when `chart-releaser` tried to push). Fix:
+
+1. Confirm *Settings → Actions → General → Workflow permissions* is set to
+   **"Read and write permissions"**.
+2. If a `gh-pages` branch already exists but was created manually (e.g. it's
+   just a copy of `main` instead of an orphan branch with `index.yaml`),
+   delete it (*Settings → Branches*, or `git push origin --delete gh-pages`).
+3. Re-run the **Release Charts** workflow from the *Actions* tab (**Run
+   workflow**, thanks to its `workflow_dispatch` trigger) — `chart-releaser`
+   will recreate `gh-pages` correctly.
+4. Re-point *Settings → Pages* at the freshly created `gh-pages` branch.
 
 ## Cutting a new release
 
