@@ -152,6 +152,24 @@ metrics:
     interval: 30s
     scrapeTimeout: 10s
     labels: {}
+  # Grafana dashboard shipped as a ConfigMap (dashboards/lightpanda.json),
+  # built from the metrics in
+  # https://github.com/lightpanda-io/browser/blob/main/src/Metrics.zig.
+  # Meant to be picked up by the Grafana dashboard sidecar (e.g. the one in
+  # kube-prometheus-stack / the grafana chart), which watches ConfigMaps
+  # carrying the `grafana_dashboard` label. The dashboard expects a Prometheus
+  # data source scraping this chart's /metrics (see serviceMonitor above).
+  grafanaDashboard:
+    enabled: false
+    # Namespace for the ConfigMap; set it to where your Grafana sidecar
+    # looks if it doesn't search all namespaces.
+    namespace: ""
+    # Must match the sidecar's label selector (`sidecar.dashboards.label`).
+    labels:
+      grafana_dashboard: "1"
+    # e.g. `grafana_folder: Lightpanda` to place it in a folder when the
+    # sidecar has `sidecar.dashboards.folderAnnotation: grafana_folder`.
+    annotations: {}
   # Prometheus Operator PrometheusRule with alerting rules based on
   # Lightpanda's own metrics (see
   # https://github.com/lightpanda-io/browser/blob/main/src/Metrics.zig).

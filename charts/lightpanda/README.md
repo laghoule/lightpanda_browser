@@ -223,6 +223,35 @@ list and inline comments.
 | `metrics.prometheusRule.additionalLabels` | Extra labels on the `PrometheusRule` (for your Prometheus' `ruleSelector`) | `{}` |
 | `metrics.prometheusRule.rules` | List of alerting rules — see below | see `values.yaml` |
 | `metrics.prometheusRule.additionalGroups` | Extra raw rule groups (standard `PrometheusRule` `groups` schema), appended as-is | `[]` |
+| `metrics.grafanaDashboard.enabled` | Create a `ConfigMap` containing the Grafana dashboard, for the Grafana sidecar | `false` |
+| `metrics.grafanaDashboard.namespace` | Namespace for the dashboard `ConfigMap` | release namespace |
+| `metrics.grafanaDashboard.labels` | Labels on the `ConfigMap`; must match the sidecar's label selector | `grafana_dashboard: "1"` |
+| `metrics.grafanaDashboard.annotations` | Annotations on the `ConfigMap` (e.g. `grafana_folder: Lightpanda`) | `{}` |
+
+#### Grafana dashboard
+
+The chart bundles a Grafana dashboard built from the metrics exposed by
+Lightpanda (see
+[`src/Metrics.zig`](https://github.com/lightpanda-io/browser/blob/main/src/Metrics.zig)).
+It is available as [`dashboards/lightpanda.json`](./dashboards/lightpanda.json)
+(import it manually in Grafana), or can be provisioned automatically:
+
+```yaml
+metrics:
+  serviceMonitor:
+    enabled: true
+  grafanaDashboard:
+    enabled: true
+    annotations:
+      grafana_folder: Lightpanda   # optional
+```
+
+This renders a `ConfigMap` labelled `grafana_dashboard: "1"`, which is what the
+Grafana dashboard sidecar (kube-prometheus-stack, the `grafana` chart, ...)
+looks for by default. The dashboard has `Data source`, `Job` and `Instance`
+variables, and covers server connections/commands, outbound HTTP
+(rate, errors, latency, size, cache), V8 heap and JS errors, arena pool
+memory, and robots.txt / CORS / adblock activity.
 
 #### Built-in alerting rules
 
@@ -467,6 +496,8 @@ charts/lightpanda/
 ├── values.schema.json
 ├── .helmignore
 ├── README.md
+├── dashboards/
+│   └── lightpanda.json
 └── templates/
     ├── _helpers.tpl
     ├── deployment.yaml
@@ -477,6 +508,8 @@ charts/lightpanda/
     ├── pdb.yaml
     ├── networkpolicy.yaml
     ├── servicemonitor.yaml
+    ├── prometheusrule.yaml
+    ├── grafana-dashboard.yaml
     └── NOTES.txt
 ```
 
