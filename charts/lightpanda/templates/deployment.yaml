@@ -89,9 +89,13 @@ spec:
             {{- if .Values.config.blockPrivateNetworks }}
             - --block-private-networks
             {{- end }}
-            {{- if .Values.config.cors }}
-            - --experimental-features
+            {{- if not .Values.config.cors }}
+            - --disable-features
             - cors
+            {{- end }}
+            {{- if .Values.config.corsStoreEntryLimit }}
+            - --cors-store-entry-limit
+            - {{ int .Values.config.corsStoreEntryLimit | quote }}
             {{- end }}
             {{- range .Values.config.loadResources }}
             - --load-resources

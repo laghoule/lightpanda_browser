@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: lightpanda/browser
   pullPolicy: IfNotPresent
-  tag: "0.4.1"
+  tag: "1.0.0"
   # If set, takes precedence over `tag` (e.g. sha256:abcdef...)
   digest: ""
 
@@ -28,7 +28,9 @@ config:
   logFormat: "logfmt"
   obeyRobots: true
   blockPrivateNetworks: false
-  cors: false
+  # CORS is enforced by default since 1.0.0; false passes `--disable-features cors`
+  cors: true
+  corsStoreEntryLimit: 1000
   loadResources: []
   watchdogMs: 30000
   httpTimeout: 15000

@@ -46,6 +46,7 @@
         "obeyRobots": { "type": "boolean" },
         "blockPrivateNetworks": { "type": "boolean" },
         "cors": { "type": "boolean" },
+        "corsStoreEntryLimit": { "type": "integer", "minimum": 0 },
         "loadResources": { "type": "array", "items": { "type": "string" } },
         "watchdogMs": { "type": "integer", "minimum": 0 },
         "httpTimeout": { "type": "integer", "minimum": 0 },
