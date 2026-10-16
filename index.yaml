@@ -4,6 +4,35 @@ entries:
   - annotations:
       artifacthub.io/license: GPL-3.0
     apiVersion: v2
+    appVersion: 1.0.1
+    created: "2026-10-16T00:57:46.065988424Z"
+    description: A Helm chart for Lightpanda Browser - AI-native headless browser
+      for web automation and scraping
+    digest: 4735476b90e7cd4f40b6d09ce70b39b4579987426caac4c1335fbcbfb53e36f3
+    home: https://lightpanda.io
+    keywords:
+    - lightpanda
+    - browser
+    - headless
+    - cdp
+    - scraping
+    - automation
+    - playwright
+    - puppeteer
+    maintainers:
+    - email: pgauthier@nihilisme.ca
+      name: laghoule
+      url: https://github.com/laghoule
+    name: lightpanda
+    sources:
+    - https://github.com/lightpanda-io/browser
+    type: application
+    urls:
+    - https://github.com/laghoule/lightpanda_browser/releases/download/lightpanda-0.5.0/lightpanda-0.5.0.tgz
+    version: 0.5.0
+  - annotations:
+      artifacthub.io/license: GPL-3.0
+    apiVersion: v2
     appVersion: 1.0.0
     created: "2026-10-02T12:34:58.638828756Z"
     description: A Helm chart for Lightpanda Browser - AI-native headless browser
@@ -175,4 +204,4 @@ entries:
     urls:
     - https://github.com/laghoule/lightpanda_browser/releases/download/lightpanda-0.1.1/lightpanda-0.1.1.tgz
     version: 0.1.1
-generated: "2026-10-02T12:34:58.638851354Z"
+generated: "2026-10-16T00:57:46.066016577Z"
