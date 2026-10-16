@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: lightpanda/browser
   pullPolicy: IfNotPresent
-  tag: "1.0.0"
+  tag: "1.0.1"
   # If set, takes precedence over `tag` (e.g. sha256:abcdef...)
   digest: ""
 
@@ -36,6 +36,14 @@ config:
   httpTimeout: 15000
   httpConnectTimeout: 8000
   httpMaxConcurrent: 40
+  # TLS key exchange groups, colon-separated (e.g. "X25519MLKEM768:X25519:P-256"); empty = engine default
+  httpCurves: ""
+  # libcurl verbose output (very noisy, for debugging only)
+  httpDebug: false
+  # Extra font files for characters missing from the bundled DejaVu fonts
+  # (e.g. CJK). Paths must exist in the container, mount them via
+  # extraVolumes/extraVolumeMounts.
+  renderFonts: []
   timezone: "UTC"
   locale: "en-US"
   userAgent: ""

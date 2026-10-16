@@ -117,6 +117,17 @@ spec:
             - --http-max-concurrent
             - {{ int .Values.config.httpMaxConcurrent | quote }}
             {{- end }}
+            {{- if .Values.config.httpCurves }}
+            - --http-curves
+            - {{ .Values.config.httpCurves | quote }}
+            {{- end }}
+            {{- if .Values.config.httpDebug }}
+            - --http-debug
+            {{- end }}
+            {{- range .Values.config.renderFonts }}
+            - --render-font
+            - {{ . | quote }}
+            {{- end }}
             {{- if .Values.config.timezone }}
             - --timezone
             - {{ .Values.config.timezone | quote }}

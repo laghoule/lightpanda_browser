@@ -95,7 +95,7 @@ list and inline comments.
 | --- | --- | --- |
 | `replicaCount` | Number of pod replicas (ignored if `autoscaling.enabled`) | `1` |
 | `image.repository` | Container image repository | `lightpanda/browser` |
-| `image.tag` | Image tag (defaults to `.Chart.AppVersion` if empty) | `"1.0.0"` |
+| `image.tag` | Image tag (defaults to `.Chart.AppVersion` if empty) | `"1.0.1"` |
 | `image.digest` | Image digest, takes precedence over `tag` if set | `""` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `imagePullSecrets` | Image pull secrets | `[]` |
@@ -137,6 +137,9 @@ list and inline comments.
 | `config.httpTimeout` | HTTP request timeout, in milliseconds | `15000` |
 | `config.httpConnectTimeout` | HTTP connect timeout, in milliseconds | `8000` |
 | `config.httpMaxConcurrent` | Max concurrent outbound HTTP requests | `40` |
+| `config.httpCurves` | TLS key exchange groups, colon-separated (e.g. `X25519MLKEM768:X25519:P-256`); empty = engine default | `""` |
+| `config.httpDebug` | Enable libcurl verbose output (`--http-debug`) | `false` |
+| `config.renderFonts` | Extra font files for characters missing from the bundled fonts, e.g. CJK (mount them via `extraVolumes`) | `[]` |
 | `config.timezone` | Timezone reported to pages | `UTC` |
 | `config.locale` | Locale reported to pages | `en-US` |
 | `config.userAgent` | Override the default User-Agent | `""` |
