@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "charts/**"
+      - "artifacthub-repo.yml"
   workflow_dispatch: {}
 
 jobs:
@@ -35,3 +36,18 @@ jobs:
           skip_existing: true
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Publish artifacthub-repo.yml to gh-pages
+        run: |
+          set -euo pipefail
+          git fetch origin gh-pages
+          git worktree add "$RUNNER_TEMP/gh-pages-tree" origin/gh-pages
+          cp artifacthub-repo.yml "$RUNNER_TEMP/gh-pages-tree/artifacthub-repo.yml"
+          cd "$RUNNER_TEMP/gh-pages-tree"
+          git add artifacthub-repo.yml
+          if git diff --cached --quiet; then
+            echo "artifacthub-repo.yml already up to date"
+          else
+            git commit -m "Publish artifacthub-repo.yml"
+            git push origin HEAD:gh-pages
+          fi
