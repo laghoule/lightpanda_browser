@@ -142,6 +142,17 @@
         "tls": { "type": "array" }
       }
     },
+    "httpRoute": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "annotations": { "type": "object" },
+        "parentRefs": { "type": "array" },
+        "hostnames": { "type": "array", "items": { "type": "string" } },
+        "path": { "type": "string" },
+        "pathType": { "type": "string", "enum": ["Exact", "PathPrefix"] }
+      }
+    },
     "resources": { "type": "object" },
     "livenessProbe": { "type": "object" },
     "readinessProbe": { "type": "object" },

@@ -421,12 +421,24 @@ ingress:
     haproxy-ingress.github.io/timeout-tunnel: "3600s"
 ```
 
-**Gateway API** (recommended for new deployments): this chart only renders
-a classic `networking.k8s.io/v1` `Ingress`. To use the Gateway API instead,
-set `ingress.enabled: false` and create your own `Gateway`/`HTTPRoute`
-resources selecting the Service created by this chart
-(`{{ include "lightpanda.fullname" . }}`), which natively supports
-WebSockets without special annotations.
+**Gateway API** (recommended for new deployments): the chart can render an
+`HTTPRoute` (`gateway.networking.k8s.io/v1`) attached to an existing `Gateway`.
+The Gateway API CRDs and the Gateway must already exist. The route backs onto
+the chart's Service, which supports WebSockets without special annotations.
+
+```yaml
+httpRoute:
+  enabled: true
+  parentRefs:
+    - name: my-gateway
+      namespace: gateway-system
+  hostnames:
+    - lightpanda.example.com
+  path: /
+  pathType: PathPrefix
+```
+
+Set `ingress.enabled: false` if you do not also want the classic `Ingress`.
 
 ## Examples
 
