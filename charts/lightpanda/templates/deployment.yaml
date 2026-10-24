@@ -1,3 +1,8 @@
+{{- if .Values.server.unixSocket }}
+{{- if or .Values.ingress.enabled .Values.httpRoute.enabled (and .Values.metrics.enabled .Values.metrics.serviceMonitor.enabled) }}
+{{- fail "server.unixSocket disables the TCP listener and the Service: ingress, httpRoute and metrics.serviceMonitor cannot be enabled with it" }}
+{{- end }}
+{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -44,10 +49,16 @@ spec:
           # splitting in its arg parser). Every value-taking flag below must
           # therefore be emitted as two list entries.
           args:
+            {{- if .Values.server.unixSocket }}
+            {{- /* --unix-socket is mutually exclusive with --host/--port/--advertise-host */}}
+            - --unix-socket
+            - {{ .Values.server.unixSocket | quote }}
+            {{- else }}
             - --host
             - {{ .Values.server.host | quote }}
             - --port
             - {{ int .Values.server.port | quote }}
+            {{- end }}
             - --log-level
             - {{ .Values.config.logLevel | quote }}
             - --log-format
@@ -56,7 +67,7 @@ spec:
             - --protocol
             - {{ . | quote }}
             {{- end }}
-            {{- if .Values.server.advertiseHost }}
+            {{- if and .Values.server.advertiseHost (not .Values.server.unixSocket) }}
             - --advertise-host
             - {{ .Values.server.advertiseHost | quote }}
             {{- end }}
@@ -80,6 +91,10 @@ spec:
             - --http-session-timeout
             - {{ int .Values.server.httpSessionTimeout | quote }}
             {{- end }}
+            {{- range .Values.server.remoteAllowOrigins }}
+            - --remote-allow-origins
+            - {{ . | quote }}
+            {{- end }}
             {{- if not .Values.metrics.enabled }}
             - --disable-metrics
             {{- end }}
@@ -96,6 +111,10 @@ spec:
             {{- if .Values.config.corsStoreEntryLimit }}
             - --cors-store-entry-limit
             - {{ int .Values.config.corsStoreEntryLimit | quote }}
+            {{- end }}
+            {{- if .Values.config.cookieJar }}
+            - --cookie-jar
+            - {{ .Values.config.cookieJar | quote }}
             {{- end }}
             {{- range .Values.config.loadResources }}
             - --load-resources
@@ -167,10 +186,12 @@ spec:
             {{- with .Values.extraArgs }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          {{- if not .Values.server.unixSocket }}
           ports:
             - name: cdp
               containerPort: {{ int .Values.server.port }}
               protocol: TCP
+          {{- end }}
           env:
             {{- if .Values.env.disableTelemetry }}
             - name: LIGHTPANDA_DISABLE_TELEMETRY
@@ -197,7 +218,7 @@ spec:
           envFrom:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if has "cdp" .Values.server.protocols }}
+          {{- if and (has "cdp" .Values.server.protocols) (not .Values.server.unixSocket) }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}

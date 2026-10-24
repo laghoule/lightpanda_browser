@@ -31,6 +31,8 @@
           "minItems": 1
         },
         "advertiseHost": { "type": "string" },
+        "unixSocket": { "type": "string", "pattern": "^(/[^:]*)?$" },
+        "remoteAllowOrigins": { "type": "array", "items": { "type": "string" } },
         "maxConnections": { "type": "integer", "minimum": 0 },
         "maxPendingConnections": { "type": "integer", "minimum": 0 },
         "maxMessageSize": { "type": "integer", "minimum": 0 },
@@ -47,6 +49,7 @@
         "blockPrivateNetworks": { "type": "boolean" },
         "cors": { "type": "boolean" },
         "corsStoreEntryLimit": { "type": "integer", "minimum": 0 },
+        "cookieJar": { "type": "string" },
         "loadResources": { "type": "array", "items": { "type": "string" } },
         "watchdogMs": { "type": "integer", "minimum": 0 },
         "httpTimeout": { "type": "integer", "minimum": 0 },

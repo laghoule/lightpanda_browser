@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: lightpanda/browser
   pullPolicy: IfNotPresent
-  tag: "1.0.1"
+  tag: "1.0.2"
   # If set, takes precedence over `tag` (e.g. sha256:abcdef...)
   digest: ""
 
@@ -17,6 +17,15 @@ server:
   protocols:
     - cdp
   advertiseHost: ""
+  # Listen on a Unix domain socket instead of TCP (`--unix-socket`, owner-only
+  # mode 0600). Must be an absolute path without ':'. Mutually exclusive with
+  # host/port/advertiseHost: when set they are not passed, and the container
+  # port, Service and HTTP probes are omitted. Share the socket with another
+  # container through `extraVolumes`/`extraVolumeMounts` (e.g. an emptyDir).
+  unixSocket: ""
+  # Origins allowed to open CDP connections that send an `Origin` header
+  # (`--remote-allow-origins`, repeatable). Rejected by default, like Chrome.
+  remoteAllowOrigins: []
   maxConnections: 16
   maxPendingConnections: 128
   maxMessageSize: 1048576
@@ -31,6 +40,10 @@ config:
   # CORS is enforced by default since 1.0.0; false passes `--disable-features cors`
   cors: true
   corsStoreEntryLimit: 1000
+  # Cookie jar file (`--cookie-jar`), saved when a connection closes (last
+  # write wins with several connections). Must be writable and, to persist,
+  # on a mounted volume (extraVolumes/extraVolumeMounts); empty = disabled.
+  cookieJar: ""
   loadResources: []
   watchdogMs: 30000
   httpTimeout: 15000

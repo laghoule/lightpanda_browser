@@ -95,7 +95,7 @@ list and inline comments.
 | --- | --- | --- |
 | `replicaCount` | Number of pod replicas (ignored if `autoscaling.enabled`) | `1` |
 | `image.repository` | Container image repository | `lightpanda/browser` |
-| `image.tag` | Image tag (defaults to `.Chart.AppVersion` if empty) | `"1.0.1"` |
+| `image.tag` | Image tag (defaults to `.Chart.AppVersion` if empty) | `"1.0.2"` |
 | `image.digest` | Image digest, takes precedence over `tag` if set | `""` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `imagePullSecrets` | Image pull secrets | `[]` |
@@ -110,6 +110,8 @@ list and inline comments.
 | `server.port` | CDP/WebDriver listening port | `9222` |
 | `server.protocols` | Protocols to enable: `cdp` and/or `webdriver` | `[cdp]` |
 | `server.advertiseHost` | Host advertised to clients (behind a proxy/ingress) | `""` |
+| `server.unixSocket` | Listen on a Unix domain socket (`--unix-socket`, absolute path without `:`) instead of TCP. Mutually exclusive with `host`/`port`/`advertiseHost`: the container port, Service and probes are omitted, and `ingress`, `httpRoute` and `metrics.serviceMonitor` cannot be enabled | `""` |
+| `server.remoteAllowOrigins` | Origins allowed to open CDP connections that send an `Origin` header (`--remote-allow-origins`); rejected by default | `[]` |
 | `server.maxConnections` | Max concurrent CDP connections | `16` |
 | `server.maxPendingConnections` | Max pending CDP connections | `128` |
 | `server.maxMessageSize` | Max CDP message size, in bytes | `1048576` |
@@ -132,6 +134,7 @@ list and inline comments.
 | `config.blockPrivateNetworks` | Block requests to private/internal networks | `false` |
 | `config.cors` | Enforce CORS checks on cross-origin fetch/XHR (`false` passes `--disable-features cors`) | `true` |
 | `config.corsStoreEntryLimit` | Max entries in the CORS store (`0` = engine default) | `1000` |
+| `config.cookieJar` | Cookie jar file (`--cookie-jar`), saved when a connection closes; mount a volume to persist it | `""` |
 | `config.loadResources` | Extra resource types to load (e.g. `iframe`, `image`) | `[]` |
 | `config.watchdogMs` | Watchdog timeout, in milliseconds | `30000` |
 | `config.httpTimeout` | HTTP request timeout, in milliseconds | `15000` |
