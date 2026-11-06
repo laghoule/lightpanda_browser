@@ -95,7 +95,7 @@ list and inline comments.
 | --- | --- | --- |
 | `replicaCount` | Number of pod replicas (ignored if `autoscaling.enabled`) | `1` |
 | `image.repository` | Container image repository | `lightpanda/browser` |
-| `image.tag` | Image tag (defaults to `.Chart.AppVersion` if empty) | `"1.0.2"` |
+| `image.tag` | Image tag (defaults to `.Chart.AppVersion` if empty) | `"1.0.3"` |
 | `image.digest` | Image digest, takes precedence over `tag` if set | `""` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `imagePullSecrets` | Image pull secrets | `[]` |
@@ -134,12 +134,15 @@ list and inline comments.
 | `config.blockPrivateNetworks` | Block requests to private/internal networks | `false` |
 | `config.cors` | Enforce CORS checks on cross-origin fetch/XHR (`false` passes `--disable-features cors`) | `true` |
 | `config.corsStoreEntryLimit` | Max entries in the CORS store (`0` = engine default) | `1000` |
+| `config.experimentalFeatures` | Experimental upstream features (`--experimental-features`). `privatecache` lets the HTTP cache store responses with `Set-Cookie` (header stripped) and requires `config.httpCacheDir`; see the upstream caveat below | `[]` |
 | `config.cookieJar` | Cookie jar file (`--cookie-jar`), saved when a connection closes; mount a volume to persist it | `""` |
-| `config.loadResources` | Extra resource types to load (e.g. `iframe`, `image`) | `[]` |
+| `config.loadResources` | Sub-resources to load: `image`, `iframe`, `worker`, `stylesheet`, `beacon`, `none` (the list replaces the upstream default) | `[]` |
 | `config.watchdogMs` | Watchdog timeout, in milliseconds | `30000` |
 | `config.httpTimeout` | HTTP request timeout, in milliseconds | `15000` |
 | `config.httpConnectTimeout` | HTTP connect timeout, in milliseconds | `8000` |
-| `config.httpMaxConcurrent` | Max concurrent outbound HTTP requests | `40` |
+| `config.httpMaxConcurrent` | Max concurrent outbound HTTP requests (`0` = upstream default: 8 × `server.maxConnections`, clamped to 40–256) | `0` |
+| `config.httpCacheDir` | HTTP cache directory (`--http-cache-dir`); empty disables caching. Mount a writable volume to persist it | `""` |
+| `config.httpCacheEntryLimit` | Max entries in the HTTP cache (`0` = no limit) | `1000` |
 | `config.httpCurves` | TLS key exchange groups, colon-separated (e.g. `X25519MLKEM768:X25519:P-256`); empty = engine default | `""` |
 | `config.httpDebug` | Enable libcurl verbose output (`--http-debug`) | `false` |
 | `config.renderFonts` | Extra font files for characters missing from the bundled fonts, e.g. CJK (mount them via `extraVolumes`) | `[]` |
@@ -474,6 +477,27 @@ config:
     httpProxy: "http://proxy.internal:3128"
     existingSecret: lightpanda-proxy-token
     existingSecretKey: token
+```
+
+### Enable the HTTP cache
+
+The cache directory must be writable; with the default read-only root
+filesystem, mount a volume there (or use `/tmp`). `privatecache` is
+experimental upstream: it caches responses that carry `Set-Cookie` after
+stripping the header, which can make later requests fail when the cookie
+store and the cache disagree.
+
+```yaml
+config:
+  httpCacheDir: /var/cache/lightpanda
+  experimentalFeatures:
+    - privatecache
+extraVolumes:
+  - name: http-cache
+    emptyDir: {}
+extraVolumeMounts:
+  - name: http-cache
+    mountPath: /var/cache/lightpanda
 ```
 
 ### Enable autoscaling

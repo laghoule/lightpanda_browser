@@ -49,12 +49,26 @@
         "blockPrivateNetworks": { "type": "boolean" },
         "cors": { "type": "boolean" },
         "corsStoreEntryLimit": { "type": "integer", "minimum": 0 },
+        "experimentalFeatures": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
         "cookieJar": { "type": "string" },
-        "loadResources": { "type": "array", "items": { "type": "string" } },
+        "loadResources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["image", "iframe", "worker", "stylesheet", "beacon", "none"]
+          },
+          "uniqueItems": true
+        },
         "watchdogMs": { "type": "integer", "minimum": 0 },
         "httpTimeout": { "type": "integer", "minimum": 0 },
         "httpConnectTimeout": { "type": "integer", "minimum": 0 },
         "httpMaxConcurrent": { "type": "integer", "minimum": 0 },
+        "httpCacheDir": { "type": "string" },
+        "httpCacheEntryLimit": { "type": "integer", "minimum": 0 },
         "httpCurves": { "type": "string" },
         "httpDebug": { "type": "boolean" },
         "renderFonts": { "type": "array", "items": { "type": "string" } },

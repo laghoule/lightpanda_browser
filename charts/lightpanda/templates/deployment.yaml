@@ -108,6 +108,10 @@ spec:
             - --disable-features
             - cors
             {{- end }}
+            {{- range .Values.config.experimentalFeatures }}
+            - --experimental-features
+            - {{ . | quote }}
+            {{- end }}
             {{- if .Values.config.corsStoreEntryLimit }}
             - --cors-store-entry-limit
             - {{ int .Values.config.corsStoreEntryLimit | quote }}
@@ -135,6 +139,14 @@ spec:
             {{- if .Values.config.httpMaxConcurrent }}
             - --http-max-concurrent
             - {{ int .Values.config.httpMaxConcurrent | quote }}
+            {{- end }}
+            {{- if .Values.config.httpCacheDir }}
+            - --http-cache-dir
+            - {{ .Values.config.httpCacheDir | quote }}
+            {{- if not (kindIs "invalid" .Values.config.httpCacheEntryLimit) }}
+            - --http-cache-entry-limit
+            - {{ int .Values.config.httpCacheEntryLimit | quote }}
+            {{- end }}
             {{- end }}
             {{- if .Values.config.httpCurves }}
             - --http-curves
