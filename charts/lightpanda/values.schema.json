@@ -76,6 +76,7 @@
         "locale": { "type": "string" },
         "userAgent": { "type": "string" },
         "userAgentSuffix": { "type": "string" },
+        "v8GcHintFloorMb": { "type": "integer", "minimum": 0 },
         "v8MaxHeapMb": { "type": "integer", "minimum": 0 },
         "blockUrls": { "type": "array", "items": { "type": "string" } },
         "blockCidrs": { "type": "array", "items": { "type": "string" } },

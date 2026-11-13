@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: lightpanda/browser
   pullPolicy: IfNotPresent
-  tag: "1.0.3"
+  tag: "1.0.4"
   # If set, takes precedence over `tag` (e.g. sha256:abcdef...)
   digest: ""
 
@@ -41,6 +41,7 @@ config:
   cors: true
   corsStoreEntryLimit: 1000
   # Experimental upstream features (`--experimental-features`, repeatable).
+  # Available flags include: `animation`, `serviceworker`, `privatecache`.
   # `privatecache` lets the HTTP cache store responses that carry a
   # Set-Cookie header (the header is stripped), and requires config.httpCacheDir
   # to be set. Experimental: behaviour may change or be removed upstream
@@ -78,6 +79,8 @@ config:
   locale: "en-US"
   userAgent: ""
   userAgentSuffix: ""
+  # Fixed floor for V8 GC hints in MiB (`--v8-gc-hint-floor-mb`). 0 = engine default
+  v8GcHintFloorMb: 0
   v8MaxHeapMb: 0
   blockUrls: []
   blockCidrs: []

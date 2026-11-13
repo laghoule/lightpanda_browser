@@ -175,6 +175,10 @@ spec:
             - --user-agent-suffix
             - {{ .Values.config.userAgentSuffix | quote }}
             {{- end }}
+            {{- if gt (int .Values.config.v8GcHintFloorMb) 0 }}
+            - --v8-gc-hint-floor-mb
+            - {{ int .Values.config.v8GcHintFloorMb | quote }}
+            {{- end }}
             {{- if gt (int .Values.config.v8MaxHeapMb) 0 }}
             - --v8-max-heap-mb
             - {{ int .Values.config.v8MaxHeapMb | quote }}

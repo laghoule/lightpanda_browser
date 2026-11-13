@@ -95,7 +95,7 @@ list and inline comments.
 | --- | --- | --- |
 | `replicaCount` | Number of pod replicas (ignored if `autoscaling.enabled`) | `1` |
 | `image.repository` | Container image repository | `lightpanda/browser` |
-| `image.tag` | Image tag (defaults to `.Chart.AppVersion` if empty) | `"1.0.3"` |
+| `image.tag` | Image tag (defaults to `.Chart.AppVersion` if empty) | `"1.0.4"` |
 | `image.digest` | Image digest, takes precedence over `tag` if set | `""` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `imagePullSecrets` | Image pull secrets | `[]` |
@@ -134,7 +134,7 @@ list and inline comments.
 | `config.blockPrivateNetworks` | Block requests to private/internal networks | `false` |
 | `config.cors` | Enforce CORS checks on cross-origin fetch/XHR (`false` passes `--disable-features cors`) | `true` |
 | `config.corsStoreEntryLimit` | Max entries in the CORS store (`0` = engine default) | `1000` |
-| `config.experimentalFeatures` | Experimental upstream features (`--experimental-features`). `privatecache` lets the HTTP cache store responses with `Set-Cookie` (header stripped) and requires `config.httpCacheDir`; see the upstream caveat below | `[]` |
+| `config.experimentalFeatures` | Experimental upstream features (`--experimental-features`, e.g. `animation`, `serviceworker`, `privatecache`). `privatecache` lets the HTTP cache store responses with `Set-Cookie` (header stripped) and requires `config.httpCacheDir`; see the upstream caveat below | `[]` |
 | `config.cookieJar` | Cookie jar file (`--cookie-jar`), saved when a connection closes; mount a volume to persist it | `""` |
 | `config.loadResources` | Sub-resources to load: `image`, `iframe`, `worker`, `stylesheet`, `beacon`, `none` (the list replaces the upstream default) | `[]` |
 | `config.watchdogMs` | Watchdog timeout, in milliseconds | `30000` |
@@ -150,6 +150,7 @@ list and inline comments.
 | `config.locale` | Locale reported to pages | `en-US` |
 | `config.userAgent` | Override the default User-Agent | `""` |
 | `config.userAgentSuffix` | Suffix appended to the default User-Agent | `""` |
+| `config.v8GcHintFloorMb` | Fixed floor for V8 GC hints, in MiB (`--v8-gc-hint-floor-mb`, `0` = engine default) | `0` |
 | `config.v8MaxHeapMb` | V8 max heap size, in MB (`0` = engine default) | `0` |
 | `config.blockUrls` | URL patterns to block | `[]` |
 | `config.blockCidrs` | CIDR ranges to block | `[]` |
