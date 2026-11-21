@@ -95,7 +95,7 @@ list and inline comments.
 | --- | --- | --- |
 | `replicaCount` | Number of pod replicas (ignored if `autoscaling.enabled`) | `1` |
 | `image.repository` | Container image repository | `lightpanda/browser` |
-| `image.tag` | Image tag (defaults to `.Chart.AppVersion` if empty) | `"1.0.4"` |
+| `image.tag` | Image tag (defaults to `.Chart.AppVersion` if empty) | `"1.0.5"` |
 | `image.digest` | Image digest, takes precedence over `tag` if set | `""` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `imagePullSecrets` | Image pull secrets | `[]` |
@@ -150,7 +150,9 @@ list and inline comments.
 | `config.locale` | Locale reported to pages | `en-US` |
 | `config.userAgent` | Override the default User-Agent | `""` |
 | `config.userAgentSuffix` | Suffix appended to the default User-Agent | `""` |
-| `config.v8GcHintFloorMb` | Fixed floor for V8 GC hints, in MiB (`--v8-gc-hint-floor-mb`, `0` = engine default) | `0` |
+| `config.v8GcRequestMinMb` | Fixed floor for V8 GC hints, in MiB (`--v8-gc-request-min-mb`, `0` = engine default) | `0` |
+| `config.v8GcHintFloorMb` | Deprecated alias of `config.v8GcRequestMinMb` — the flag was renamed from `--v8-gc-hint-floor-mb` in Lightpanda 1.0.5. Honored only while `config.v8GcRequestMinMb` is `0`, and always passed under the new flag name | `0` |
+| `config.v8GcAutoMinMb` | Heap size below which V8 doesn't start a full GC on its own, in MiB (`--v8-gc-auto-min-mb`, `0` = upstream default) | `0` |
 | `config.v8MaxHeapMb` | V8 max heap size, in MB (`0` = engine default) | `0` |
 | `config.blockUrls` | URL patterns to block | `[]` |
 | `config.blockCidrs` | CIDR ranges to block | `[]` |

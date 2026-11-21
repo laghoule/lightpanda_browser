@@ -175,9 +175,20 @@ spec:
             - --user-agent-suffix
             - {{ .Values.config.userAgentSuffix | quote }}
             {{- end }}
-            {{- if gt (int .Values.config.v8GcHintFloorMb) 0 }}
-            - --v8-gc-hint-floor-mb
-            - {{ int .Values.config.v8GcHintFloorMb | quote }}
+            {{- /* `--v8-gc-hint-floor-mb` was renamed `--v8-gc-request-min-mb`
+                   in Lightpanda 1.0.5; the old values key is a deprecated alias
+                   honored only while the new one is left at 0. */}}
+            {{- $v8GcRequestMinMb := int .Values.config.v8GcRequestMinMb }}
+            {{- if and (eq $v8GcRequestMinMb 0) (hasKey .Values.config "v8GcHintFloorMb") }}
+            {{- $v8GcRequestMinMb = int .Values.config.v8GcHintFloorMb }}
+            {{- end }}
+            {{- if gt $v8GcRequestMinMb 0 }}
+            - --v8-gc-request-min-mb
+            - {{ $v8GcRequestMinMb | quote }}
+            {{- end }}
+            {{- if gt (int .Values.config.v8GcAutoMinMb) 0 }}
+            - --v8-gc-auto-min-mb
+            - {{ int .Values.config.v8GcAutoMinMb | quote }}
             {{- end }}
             {{- if gt (int .Values.config.v8MaxHeapMb) 0 }}
             - --v8-max-heap-mb

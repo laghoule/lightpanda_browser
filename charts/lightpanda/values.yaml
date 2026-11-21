@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: lightpanda/browser
   pullPolicy: IfNotPresent
-  tag: "1.0.4"
+  tag: "1.0.5"
   # If set, takes precedence over `tag` (e.g. sha256:abcdef...)
   digest: ""
 
@@ -79,8 +79,16 @@ config:
   locale: "en-US"
   userAgent: ""
   userAgentSuffix: ""
-  # Fixed floor for V8 GC hints in MiB (`--v8-gc-hint-floor-mb`). 0 = engine default
+  # Fixed floor for V8 GC hints in MiB (`--v8-gc-request-min-mb`). 0 = engine
+  # default
+  v8GcRequestMinMb: 0
+  # Deprecated alias of `v8GcRequestMinMb`: `--v8-gc-hint-floor-mb` was renamed
+  # `--v8-gc-request-min-mb` in Lightpanda 1.0.5. Honored only while
+  # `v8GcRequestMinMb` is left at 0, and always passed under the new name.
   v8GcHintFloorMb: 0
+  # V8 doesn't start a full GC on its own below this heap size, in MiB
+  # (`--v8-gc-auto-min-mb`). 0 = upstream default (32)
+  v8GcAutoMinMb: 0
   v8MaxHeapMb: 0
   blockUrls: []
   blockCidrs: []
