@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: lightpanda/browser
   pullPolicy: IfNotPresent
-  tag: "1.0.5"
+  tag: "1.0.6"
   # If set, takes precedence over `tag` (e.g. sha256:abcdef...)
   digest: ""
 
@@ -26,6 +26,12 @@ server:
   # Origins allowed to open CDP connections that send an `Origin` header
   # (`--remote-allow-origins`, repeatable). Rejected by default, like Chrome.
   remoteAllowOrigins: []
+  # Let CDP `Emulation.setTimezoneOverride` change the time zone used by
+  # `Date` and `Intl` (`--cdp-allow-timezone-override`). Off by default because
+  # the zone is shared by the whole process: every connection sees it, not just
+  # the one that asked. Without the flag, the command is accepted and ignored
+  # with a warning.
+  cdpAllowTimezoneOverride: false
   maxConnections: 16
   maxPendingConnections: 128
   maxMessageSize: 1048576

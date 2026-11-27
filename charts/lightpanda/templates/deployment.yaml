@@ -67,6 +67,9 @@ spec:
             - --protocol
             - {{ . | quote }}
             {{- end }}
+            {{- if .Values.server.cdpAllowTimezoneOverride }}
+            - --cdp-allow-timezone-override
+            {{- end }}
             {{- if and .Values.server.advertiseHost (not .Values.server.unixSocket) }}
             - --advertise-host
             - {{ .Values.server.advertiseHost | quote }}

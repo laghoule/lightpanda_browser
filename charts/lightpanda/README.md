@@ -95,7 +95,7 @@ list and inline comments.
 | --- | --- | --- |
 | `replicaCount` | Number of pod replicas (ignored if `autoscaling.enabled`) | `1` |
 | `image.repository` | Container image repository | `lightpanda/browser` |
-| `image.tag` | Image tag (defaults to `.Chart.AppVersion` if empty) | `"1.0.5"` |
+| `image.tag` | Image tag (defaults to `.Chart.AppVersion` if empty) | `"1.0.6"` |
 | `image.digest` | Image digest, takes precedence over `tag` if set | `""` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `imagePullSecrets` | Image pull secrets | `[]` |
@@ -112,6 +112,7 @@ list and inline comments.
 | `server.advertiseHost` | Host advertised to clients (behind a proxy/ingress) | `""` |
 | `server.unixSocket` | Listen on a Unix domain socket (`--unix-socket`, absolute path without `:`) instead of TCP. Mutually exclusive with `host`/`port`/`advertiseHost`: the container port, Service and probes are omitted, and `ingress`, `httpRoute` and `metrics.serviceMonitor` cannot be enabled | `""` |
 | `server.remoteAllowOrigins` | Origins allowed to open CDP connections that send an `Origin` header (`--remote-allow-origins`); rejected by default | `[]` |
+| `server.cdpAllowTimezoneOverride` | Allow CDP `Emulation.setTimezoneOverride` to change the process-wide time zone (`--cdp-allow-timezone-override`). Off by default: the override affects every connection, not only the one that asked; without the flag the command is ignored with a warning | `false` |
 | `server.maxConnections` | Max concurrent CDP connections | `16` |
 | `server.maxPendingConnections` | Max pending CDP connections | `128` |
 | `server.maxMessageSize` | Max CDP message size, in bytes | `1048576` |

@@ -33,6 +33,7 @@
         "advertiseHost": { "type": "string" },
         "unixSocket": { "type": "string", "pattern": "^(/[^:]*)?$" },
         "remoteAllowOrigins": { "type": "array", "items": { "type": "string" } },
+        "cdpAllowTimezoneOverride": { "type": "boolean" },
         "maxConnections": { "type": "integer", "minimum": 0 },
         "maxPendingConnections": { "type": "integer", "minimum": 0 },
         "maxMessageSize": { "type": "integer", "minimum": 0 },
